@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@model UserViewModel
+@inject IOptions<RequestLocalizationOptions> _localizationOptions
+
+@{
+    ViewData["Title"] = "Home Page";
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var supportedCulures = _localizationOptions?.Value?.SupportedUICultures?.Select(c => new SelectListItem { Text = c.NativeName, Value = c.Name });
+}
+
+@inject IHtmlLocalizer<SharedResource> _htmlLocalizer
+@_htmlLocalizer["<h1>Hello {0}</h1>","Hema Moawad"]
+
+<div class="text-center">
+    <h1 class="display-4">@_localizer["Welcome"]</h1>
+</div>
+
+<form asp-action="ChangeLanguage" class="mt-5">
+    <div>
+        <label class="form-label">@_localizer["Language"]</label>
+        <select class="form-select" name="culture" asp-items="@supportedCulures"></select>
+    </div>
+    <input type="submit" class="btn btn-primary mt-2" value="@_localizer["Use"]"/>
+</form>
+
+<table class="table table-striped mt-5">
+    <tbody>
+        <tr>
+            <td>@_localizer["Culture"]</td>
+            <td>@requestCulture?.RequestCulture.Culture</td>
+        </tr>
+        <tr>
+            <td>@_localizer["UICulture"]</td>
+            <td>@requestCulture?.RequestCulture.UICulture</td>
+        </tr>
+        <tr>
+            <td>@_localizer["DateTime"]</td>
+            <td>@DateTime.Now.ToLongDateString()</td>
+        </tr>
+        <tr>
+            <td>@_localizer["Currency"]</td>
+            <td>@(233.234.ToString("c"))</td>
+        </tr>
+         <tr>
+            <td>@_localizer["Numbers"]</td>
+            <td>@(233.234.ToString())</td>
+        </tr>
+    </tbody>
+</table>
+
+<form class="mt-5">
+    <div>
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <input type="submit" class="btn btn-primary mt-2" value="@_localizer["Add"]"/>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
